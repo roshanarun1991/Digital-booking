@@ -472,6 +472,15 @@ function setText(selector, key) {
   });
 }
 
+function setNavIcon(view, key) {
+  const button = document.querySelector(`[data-view="${view}"]`);
+  if (!button) return;
+  const label = t(key);
+  button.textContent = "";
+  button.setAttribute("aria-label", label);
+  button.setAttribute("title", label);
+}
+
 function applyLanguage() {
   document.documentElement.lang = state.lang;
   document.title = t("documentTitle");
@@ -482,11 +491,11 @@ function applyLanguage() {
   [t("web"), t("mobile"), t("localScreen")].forEach((text, index) => {
     if (headerTags[index]) headerTags[index].textContent = text;
   });
-  document.querySelector('[data-view="home"]').textContent = t("navHome");
-  document.querySelector('[data-view="booking"]').textContent = t("navBook");
-  document.querySelector('[data-view="mybookings"]').textContent = t("navMine");
-  document.querySelector('[data-view="complaints"]').textContent = t("navReport");
-  document.querySelector('[data-view="admin"]').textContent = t("navSettings");
+  setNavIcon("home", "navHome");
+  setNavIcon("booking", "navBook");
+  setNavIcon("mybookings", "navMine");
+  setNavIcon("complaints", "navReport");
+  setNavIcon("admin", "navSettings");
   setText(".login-card .eyebrow", "memberAccess");
   setText("#login-title", "loginTitle");
   const loginCopy = document.querySelector(".login-card > p:not(.eyebrow):not(.warning)");

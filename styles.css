@@ -154,14 +154,45 @@ h1 {
 }
 
 .tab {
-  min-height: 38px;
+  width: 46px;
+  min-height: 42px;
   border: 1px solid rgba(53, 65, 85, 0.12);
   border-radius: 999px;
-  padding: 0 14px;
+  padding: 0;
   background: rgba(255, 255, 255, 0.72);
   color: var(--navy);
-  font-size: 13px;
+  font-size: 0;
   font-weight: 900;
+  display: grid;
+  place-items: center;
+}
+
+.tab::before {
+  content: "";
+  width: 20px;
+  height: 20px;
+  border: 2px solid currentColor;
+  border-radius: 5px;
+}
+
+.tab[data-view="home"]::before {
+  border-radius: 50% 50% 6px 6px;
+}
+
+.tab[data-view="booking"]::before,
+.tab[data-view="mybookings"]::before {
+  border-radius: 4px;
+  box-shadow: inset 0 -7px 0 currentColor;
+}
+
+.tab[data-view="complaints"]::before {
+  border-radius: 3px;
+  transform: rotate(45deg);
+}
+
+.tab[data-view="admin"]::before {
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 5px rgba(53, 65, 85, 0.18);
 }
 
 .tab.active {
@@ -1089,7 +1120,7 @@ textarea {
     min-height: 54px;
     padding: 0 4px;
     border-radius: 14px;
-    font-size: 10px;
+    font-size: 0;
     line-height: 1.15;
     white-space: normal;
     text-align: center;
@@ -1100,32 +1131,10 @@ textarea {
   }
 
   .tab::before {
-    content: "";
     width: 18px;
     height: 18px;
     margin: 0 auto;
-    border: 2px solid currentColor;
-    border-radius: 5px;
     opacity: 0.9;
-  }
-
-  .tab[data-view="home"]::before {
-    border-radius: 50% 50% 6px 6px;
-  }
-
-  .tab[data-view="booking"]::before,
-  .tab[data-view="mybookings"]::before {
-    box-shadow: inset 0 -6px 0 currentColor;
-  }
-
-  .tab[data-view="complaints"]::before {
-    transform: rotate(45deg);
-    border-radius: 3px;
-  }
-
-  .tab[data-view="admin"]::before {
-    border-radius: 50%;
-    box-shadow: inset 0 0 0 4px rgba(255, 255, 255, 0.35);
   }
 
   .tab.active {
