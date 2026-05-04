@@ -397,7 +397,7 @@ function load() {
   try {
     const parsed = JSON.parse(saved);
     state.lang = parsed.lang === "sv" ? "sv" : "en";
-    state.user = registeredMembers.find((member) => member.email === parsed.userEmail) || null;
+    state.user = null;
     state.selectedDay = state.days.some((day) => day.key === parsed.selectedDay) ? parsed.selectedDay : state.days[0].key;
     rebuildDaysForLanguage();
     state.bookings = parsed.bookings || state.bookings;
@@ -1023,9 +1023,9 @@ function bindTabs() {
 buildDays();
 seedData();
 load();
-if (!state.user) state.user = registeredMembers[0];
 bindTabs();
 bindComplaints();
+applyLanguage();
 if (state.user) {
   document.getElementById("login-screen").classList.add("hidden");
   document.getElementById("app-shell").classList.remove("hidden");
