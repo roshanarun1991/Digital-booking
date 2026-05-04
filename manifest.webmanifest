@@ -1,0 +1,9 @@
+{
+  "name": "Laundry Room Booking System",
+  "short_name": "Laundry Booking",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#f5f7fa",
+  "theme_color": "#10233f",
+  "description": "A digital booking prototype for a residential association laundry room."
+}

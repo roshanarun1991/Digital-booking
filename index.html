@@ -1,0 +1,264 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#354155" />
+    <title>Laundry Room Booking System</title>
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="app-header">
+      <div class="header-inner">
+        <div>
+          <p class="eyebrow">BRF laundry room</p>
+          <h1>Digital laundry</h1>
+          <p class="header-copy">Book, cancel, report issues and manage the shared laundry room from one simple app.</p>
+        </div>
+        <div class="header-tags" aria-label="Access channels">
+          <span>Web</span>
+          <span>Mobile</span>
+        </div>
+        <div class="language-toggle" aria-label="Language">
+          <button id="lang-en" class="lang-button active" data-lang="en">EN</button>
+          <button id="lang-sv" class="lang-button" data-lang="sv">SV</button>
+        </div>
+      </div>
+      <nav id="main-tabs" class="tabs hidden" aria-label="Main views">
+        <button class="tab active" data-view="home">Home</button>
+        <button class="tab" data-view="booking">Book laundry</button>
+        <button class="tab" data-view="mybookings">Your bookings</button>
+        <button class="tab" data-view="complaints">Report issue</button>
+        <button class="tab" data-view="admin">Settings</button>
+      </nav>
+    </header>
+
+    <main>
+      <section id="login-screen" class="login-screen" aria-labelledby="login-title">
+        <div class="login-card">
+          <p class="eyebrow dark">Member access</p>
+          <h2 id="login-title">Log in with registered email</h2>
+          <p>Use a registered member email to enter the laundry booking demo.</p>
+          <label>
+            <span>Email ID</span>
+            <input id="email-input" type="email" value="roshan.arun@example.com" autocomplete="email" />
+          </label>
+          <button id="login-button" class="primary">Log in</button>
+          <p id="login-error" class="warning hidden">This email is not registered.</p>
+          <div class="demo-users">
+            <b>Demo emails</b>
+            <span>roshan.arun@example.com</span>
+            <span>anna.kowalska@example.com</span>
+            <span>erik.larsson@example.com</span>
+          </div>
+        </div>
+      </section>
+
+      <div id="app-shell" class="hidden">
+        <p id="status" class="status" role="status">Ready for pilot review.</p>
+
+        <section id="home" class="view active" aria-labelledby="home-title">
+          <div class="phone-dashboard">
+            <div class="profile-row">
+              <div class="avatar" aria-hidden="true"></div>
+              <button id="logout-button" class="balance-chip">Log out</button>
+            </div>
+            <div class="welcome-copy">
+              <p>Welcome back</p>
+              <h2 id="home-title"><span id="home-name">Member</span></h2>
+              <span id="home-apartment">Registered apartment</span>
+            </div>
+            <div class="home-grid">
+              <button class="option-card" data-jump="booking">
+                <span class="option-icon washer-icon" aria-hidden="true"></span>
+                <b>Book laundry</b>
+              </button>
+              <button class="option-card" data-jump="complaints">
+                <span class="option-icon tools-icon" aria-hidden="true"></span>
+                <b>Report issue</b>
+              </button>
+              <button class="option-card" data-jump="mybookings">
+                <span class="option-icon booking-icon" aria-hidden="true"></span>
+                <b>Your bookings</b>
+              </button>
+              <button class="option-card" data-jump="admin">
+                <span class="option-icon settings-icon" aria-hidden="true"></span>
+                <b>Settings</b>
+              </button>
+            </div>
+            <section class="progress-card">
+              <div>
+                <b id="home-progress-title">Laundry status</b>
+                <span id="home-progress-meta">No current booking</span>
+              </div>
+              <div class="progress-track"><span style="width: 64%"></span></div>
+              <div class="progress-details">
+                <span>Status: washing</span>
+                <span>Reminder: 30 min before</span>
+              </div>
+            </section>
+          </div>
+
+          <section class="panel notification-panel">
+            <div class="section-head">
+              <h2>Notifications</h2>
+              <p>Reminders and last-minute cancellations appear here. In a live system these would also go by push/email.</p>
+            </div>
+            <div id="notification-list"></div>
+          </section>
+        </section>
+
+        <section id="booking" class="view app-page" aria-labelledby="booking-title">
+          <div class="page-topbar">
+            <button class="back-button" data-jump="home" aria-label="Back to home">‹</button>
+            <h2 id="booking-title">Book laundry</h2>
+          </div>
+          <div class="filter-row">
+            <div class="signed-in booking-identity">
+              <span>Logged in as</span>
+              <strong id="member-label">Member</strong>
+            </div>
+            <div class="mini-stat">
+              <b>4 h</b>
+              <span>per slot</span>
+            </div>
+          </div>
+          <div id="day-picker" class="day-picker" aria-label="Choose day"></div>
+          <div class="metrics compact">
+            <article>
+              <strong id="free-count">0</strong>
+              <span>free today</span>
+            </article>
+            <article>
+              <strong id="booked-count">0</strong>
+              <span>booked</span>
+            </article>
+            <article>
+              <strong>30</strong>
+              <span>min reminder</span>
+            </article>
+          </div>
+          <div id="booking-slots" class="slot-list"></div>
+          <section class="month-panel">
+            <div class="section-head">
+              <h2 id="month-title">Month overview</h2>
+              <p id="month-copy">See the next month of laundry slots at a glance.</p>
+            </div>
+            <div id="month-overview" class="month-grid" aria-label="Month slot overview"></div>
+          </section>
+        </section>
+
+        <section id="mybookings" class="view app-page" aria-labelledby="mybookings-title">
+          <div class="page-topbar">
+            <button class="back-button" data-jump="home" aria-label="Back to home">‹</button>
+            <h2 id="mybookings-title">Your bookings</h2>
+          </div>
+          <p class="page-intro">Cancel or reschedule your reserved time. Last-minute cancellations notify all registered members.</p>
+          <div id="my-bookings-full" class="booking-list"></div>
+          <div id="move-notice" class="notice hidden">
+            <strong>Reschedule mode</strong>
+            <p>Select any green available slot on the booking page to move your booking.</p>
+            <button class="secondary" id="stop-moving">Stop moving</button>
+          </div>
+        </section>
+
+        <section id="complaints" class="view app-page" aria-labelledby="complaints-title">
+          <div class="page-topbar">
+            <button class="back-button" data-jump="home" aria-label="Back to home">‹</button>
+            <h2 id="complaints-title">Report issue</h2>
+          </div>
+          <div class="layout">
+            <section class="panel main-panel">
+              <div class="section-head">
+                <h2>Complaint details</h2>
+                <p>Report machine faults, cleaning problems, blocked access or booking misuse.</p>
+              </div>
+              <form id="complaint-form" class="complaint-form">
+                <label>
+                  <span>Category</span>
+                  <select id="complaint-category">
+                    <option>Machine fault</option>
+                    <option>Cleaning complaint</option>
+                    <option>Booking misuse</option>
+                    <option>Access problem</option>
+                    <option>Other</option>
+                  </select>
+                </label>
+                <label>
+                  <span>Message</span>
+                  <textarea id="complaint-message" rows="6" placeholder="Describe what happened, which machine, and when."></textarea>
+                </label>
+                <label class="check-field">
+                  <input id="complaint-urgent" type="checkbox" />
+                  <span>Urgent: affects today's laundry use</span>
+                </label>
+                <button class="primary" type="submit">Submit report</button>
+              </form>
+            </section>
+            <aside class="panel side-panel">
+              <div class="section-head">
+                <h2>Submitted reports</h2>
+                <p>Stored locally for the prototype.</p>
+              </div>
+              <div id="complaint-list"></div>
+            </aside>
+          </div>
+        </section>
+
+        <section id="admin" class="view app-page" aria-labelledby="admin-title">
+          <div class="page-topbar">
+            <button class="back-button" data-jump="home" aria-label="Back to home">‹</button>
+            <h2 id="admin-title">Settings</h2>
+          </div>
+          <div class="layout">
+            <section class="panel main-panel">
+              <div class="section-head">
+                <h2>Association rules</h2>
+                <p>One active booking per resident, 30-minute reminders and all-member cancellation alerts.</p>
+              </div>
+              <div class="rule-grid">
+                <label>
+                  <span>Max active bookings</span>
+                  <input id="rule-active" value="1" inputmode="numeric" />
+                </label>
+                <label>
+                  <span>Reminder minutes before</span>
+                  <input id="rule-reminder" value="30" inputmode="numeric" />
+                </label>
+                <label>
+                  <span>Slot length hours</span>
+                  <input id="rule-length" value="4" inputmode="numeric" />
+                </label>
+                <label>
+                  <span>Notify all on cancellation</span>
+                  <input id="rule-cancel" value="Yes" readonly />
+                </label>
+              </div>
+              <div class="section-head">
+                <h2>Service and blocked times</h2>
+                <p>The board can close a slot during repair, cleaning or maintenance.</p>
+              </div>
+              <div id="admin-day-picker" class="day-picker" aria-label="Choose admin day"></div>
+              <div id="admin-slots" class="slot-list"></div>
+            </section>
+            <aside class="panel side-panel">
+              <div class="section-head">
+                <h2>System behaviour</h2>
+                <p>The demo models the main association rules.</p>
+              </div>
+              <div class="feature-list">
+                <article><b>Registered email login</b><span>Booking is tied to the member record and apartment.</span></article>
+                <article><b>One person per slot</b><span>Booked slots cannot be double-booked.</span></article>
+                <article><b>30-minute reminder</b><span>Reminder is scheduled when a booking is created.</span></article>
+                <article><b>Cancellation broadcast</b><span>Last-minute cancellations create an all-member notification.</span></article>
+              </div>
+            </aside>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <script src="app.js"></script>
+  </body>
+</html>
