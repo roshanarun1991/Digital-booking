@@ -33,6 +33,15 @@ const translations = {
     reportIssue: "Report issue",
     yourBookings: "Your bookings",
     settings: "Settings",
+    associationAdmin: "Association admin",
+    adminLoginCopy: "Log in to review complaints and reserve service/maintenance slots.",
+    adminEmail: "Admin email",
+    password: "Password",
+    adminLoginButton: "Log in as admin",
+    adminLoginError: "Wrong admin login.",
+    adminLogout: "Log out admin",
+    complaintsAdminTitle: "Complaints",
+    complaintsAdminCopy: "Reports submitted by members appear here for the association.",
     laundryStatus: "Laundry status",
     noCurrentBooking: "No current booking",
     statusWashing: "Status: washing",
@@ -157,6 +166,15 @@ const translations = {
     reportIssue: "Felanmäl",
     yourBookings: "Dina bokningar",
     settings: "Inställningar",
+    associationAdmin: "Föreningsadmin",
+    adminLoginCopy: "Logga in för att läsa klagomål och reservera service-/underhållspass.",
+    adminEmail: "Admin e-post",
+    password: "Lösenord",
+    adminLoginButton: "Logga in som admin",
+    adminLoginError: "Fel admininloggning.",
+    adminLogout: "Logga ut admin",
+    complaintsAdminTitle: "Klagomål",
+    complaintsAdminCopy: "Rapporter från medlemmar visas här för föreningen.",
     laundryStatus: "Tvättstatus",
     noCurrentBooking: "Ingen aktuell bokning",
     statusWashing: "Status: tvättar",
@@ -266,6 +284,7 @@ const slots = [
 const state = {
   selectedDay: "",
   user: null,
+  adminLoggedIn: false,
   moveSource: null,
   lang: "en",
   bookings: {},
@@ -487,10 +506,6 @@ function applyLanguage() {
   setText(".app-header .eyebrow", "brand");
   setText(".app-header h1", "headerTitle");
   setText(".header-copy", "headerCopy");
-  const headerTags = document.querySelectorAll(".header-tags span");
-  [t("web"), t("mobile"), t("localScreen")].forEach((text, index) => {
-    if (headerTags[index]) headerTags[index].textContent = text;
-  });
   setNavIcon("home", "navHome");
   setNavIcon("booking", "navBook");
   setNavIcon("mybookings", "navMine");
@@ -542,6 +557,14 @@ function applyLanguage() {
   setText("#complaints .side-panel .section-head h2", "submittedReports");
   setText("#complaints .side-panel .section-head p", "reportsCopy");
   setText("#admin-title", "settings");
+  setText("#admin-login .section-head h2", "associationAdmin");
+  setText("#admin-login .section-head p", "adminLoginCopy");
+  const adminLoginLabels = document.querySelectorAll("#admin-login label span");
+  [t("adminEmail"), t("password")].forEach((text, index) => {
+    if (adminLoginLabels[index]) adminLoginLabels[index].textContent = text;
+  });
+  setText("#admin-login-button", "adminLoginButton");
+  setText("#admin-login-error", "adminLoginError");
   const adminHeads = document.querySelectorAll("#admin .main-panel > .section-head");
   if (adminHeads[0]) {
     adminHeads[0].querySelector("h2").textContent = t("associationRules");
@@ -556,19 +579,9 @@ function applyLanguage() {
     adminHeads[1].querySelector("h2").textContent = t("serviceBlocked");
     adminHeads[1].querySelector("p").textContent = t("serviceCopy");
   }
-  setText("#admin .side-panel .section-head h2", "systemBehaviour");
-  setText("#admin .side-panel .section-head p", "systemCopy");
-  const features = document.querySelectorAll("#admin .feature-list article");
-  [
-    ["registeredLogin", "registeredLoginCopy"],
-    ["onePersonSlot", "onePersonSlotCopy"],
-    ["reminderFeature", "reminderFeatureCopy"],
-    ["cancellationFeature", "cancellationFeatureCopy"]
-  ].forEach(([title, body], index) => {
-    if (!features[index]) return;
-    features[index].querySelector("b").textContent = t(title);
-    features[index].querySelector("span").textContent = t(body);
-  });
+  setText("#admin .side-panel .section-head h2", "complaintsAdminTitle");
+  setText("#admin .side-panel .section-head p", "complaintsAdminCopy");
+  setText("#admin-logout-button", "adminLogout");
   const options = document.querySelectorAll("#complaint-category option");
   t("categoryOptions").forEach((text, index) => {
     if (options[index]) {
@@ -603,7 +616,7 @@ function login() {
   document.getElementById("login-error").classList.add("hidden");
   document.getElementById("login-screen").classList.add("hidden");
   document.getElementById("app-shell").classList.remove("hidden");
-  document.getElementById("main-tabs").classList.remove("hidden");
+  document.body.classList.add("logged-in");
   showView("home");
   save();
   setStatus(`${t("loggedInAs")} ${memberLabel()}.`);
@@ -613,9 +626,10 @@ function login() {
 function logout() {
   state.user = null;
   state.moveSource = null;
+  state.adminLoggedIn = false;
   document.getElementById("login-screen").classList.remove("hidden");
   document.getElementById("app-shell").classList.add("hidden");
-  document.getElementById("main-tabs").classList.add("hidden");
+  document.body.classList.remove("logged-in");
   save();
 }
 
@@ -923,6 +937,45 @@ function renderComplaints() {
     .join("");
 }
 
+function renderAdminComplaints() {
+  const target = document.getElementById("admin-complaint-list");
+  if (!target) return;
+  if (!state.complaints.length) {
+    target.innerHTML = `<div class="empty"><b>${t("noReports")}</b><p>${t("reportsEmpty")}</p></div>`;
+    return;
+  }
+  target.innerHTML = state.complaints
+    .map(
+      (item) => `
+      <article class="complaint-row ${item.urgent ? "urgent" : ""}">
+        <strong>${item.category}${item.urgent ? ` - ${t("urgentSuffix")}` : ""}</strong>
+        <span>${item.name} - ${t("apt")} ${item.apartment}</span>
+        <p>${item.message}</p>
+        <small>${item.createdAt}</small>
+      </article>`
+    )
+    .join("");
+}
+
+function updateAdminView() {
+  document.getElementById("admin-login").classList.toggle("hidden", state.adminLoggedIn);
+  document.getElementById("admin-dashboard").classList.toggle("hidden", !state.adminLoggedIn);
+  if (state.adminLoggedIn) renderAdminComplaints();
+}
+
+function loginAdmin() {
+  const email = document.getElementById("admin-email").value.trim().toLowerCase();
+  const password = document.getElementById("admin-password").value;
+  if (email === "association.admin@example.com" && password === "admin123") {
+    state.adminLoggedIn = true;
+    document.getElementById("admin-login-error").classList.add("hidden");
+    setStatus(t("associationAdmin"));
+    render();
+    return;
+  }
+  document.getElementById("admin-login-error").classList.remove("hidden");
+}
+
 function renderHomeProgress() {
   const title = document.getElementById("home-progress-title");
   const meta = document.getElementById("home-progress-meta");
@@ -1004,6 +1057,7 @@ function render() {
   renderMetrics();
   renderMonthOverview();
   bindInputs();
+  updateAdminView();
   document.getElementById("move-notice").classList.toggle("hidden", !state.moveSource);
 }
 
@@ -1022,6 +1076,15 @@ function bindTabs() {
   document.querySelectorAll(".lang-button").forEach((button) => {
     button.addEventListener("click", () => setLanguage(button.dataset.lang));
   });
+  document.getElementById("admin-login-button").addEventListener("click", loginAdmin);
+  document.getElementById("admin-password").addEventListener("keydown", (event) => {
+    if (event.key === "Enter") loginAdmin();
+  });
+  document.getElementById("admin-logout-button").addEventListener("click", () => {
+    state.adminLoggedIn = false;
+    setStatus(t("adminLogout"));
+    render();
+  });
   document.getElementById("login-button").addEventListener("click", login);
   document.getElementById("email-input").addEventListener("keydown", (event) => {
     if (event.key === "Enter") login();
@@ -1038,7 +1101,7 @@ applyLanguage();
 if (state.user) {
   document.getElementById("login-screen").classList.add("hidden");
   document.getElementById("app-shell").classList.remove("hidden");
-  document.getElementById("main-tabs").classList.remove("hidden");
+  document.body.classList.add("logged-in");
   save();
   render();
 }

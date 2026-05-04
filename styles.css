@@ -153,6 +153,19 @@ h1 {
   margin-top: 16px;
 }
 
+body.logged-in .app-header {
+  display: none;
+}
+
+body.logged-in main {
+  padding-top: 12px;
+}
+
+body.logged-in .tabs,
+.tabs {
+  display: none !important;
+}
+
 .tab {
   width: 46px;
   min-height: 42px;
@@ -1040,6 +1053,20 @@ textarea {
   gap: 5px;
 }
 
+.admin-login-card {
+  display: grid;
+  gap: 14px;
+}
+
+#admin-dashboard.hidden,
+#admin-login.hidden {
+  display: none;
+}
+
+#admin-complaint-list {
+  margin-bottom: 12px;
+}
+
 @media (min-width: 900px) {
   #home.active {
     display: grid;
@@ -1098,51 +1125,8 @@ textarea {
     min-height: 30px;
   }
 
-  .tabs {
-    position: fixed;
-    left: 10px;
-    right: 10px;
-    bottom: 10px;
-    z-index: 40;
-    display: grid;
-    grid-template-columns: repeat(5, minmax(0, 1fr));
-    gap: 4px;
-    margin: 0;
-    padding: 7px;
-    overflow: visible;
-    border-radius: 20px;
-    background: rgba(255, 255, 255, 0.96);
-    box-shadow: 0 18px 45px rgba(47, 57, 74, 0.2);
-  }
-
-  .tab {
-    position: relative;
-    min-height: 54px;
-    padding: 0 4px;
-    border-radius: 14px;
-    font-size: 0;
-    line-height: 1.15;
-    white-space: normal;
-    text-align: center;
-    background: transparent;
-    display: grid;
-    align-content: center;
-    gap: 3px;
-  }
-
-  .tab::before {
-    width: 18px;
-    height: 18px;
-    margin: 0 auto;
-    opacity: 0.9;
-  }
-
-  .tab.active {
-    background: var(--navy);
-  }
-
   main {
-    padding: 10px 10px 104px;
+    padding: 10px 10px 22px;
   }
 
   .status {

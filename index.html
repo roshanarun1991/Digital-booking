@@ -16,10 +16,6 @@
           <h1>Digital laundry</h1>
           <p class="header-copy">Book, cancel, report issues and manage the shared laundry room from one simple app.</p>
         </div>
-        <div class="header-tags" aria-label="Access channels">
-          <span>Web</span>
-          <span>Mobile</span>
-        </div>
         <div class="language-toggle" aria-label="Language">
           <button id="lang-en" class="lang-button active" data-lang="en">EN</button>
           <button id="lang-sv" class="lang-button" data-lang="sv">SV</button>
@@ -211,7 +207,23 @@
             <button class="back-button" data-jump="home" aria-label="Back to home">‹</button>
             <h2 id="admin-title">Settings</h2>
           </div>
-          <div class="layout">
+          <section id="admin-login" class="panel admin-login-card">
+            <div class="section-head">
+              <h2>Association admin</h2>
+              <p>Log in to review complaints and reserve service/maintenance slots.</p>
+            </div>
+            <label>
+              <span>Admin email</span>
+              <input id="admin-email" type="email" value="association.admin@example.com" autocomplete="off" />
+            </label>
+            <label>
+              <span>Password</span>
+              <input id="admin-password" type="password" value="admin123" autocomplete="off" />
+            </label>
+            <button id="admin-login-button" class="primary">Log in as admin</button>
+            <p id="admin-login-error" class="warning hidden">Wrong admin login.</p>
+          </section>
+          <div id="admin-dashboard" class="layout hidden">
             <section class="panel main-panel">
               <div class="section-head">
                 <h2>Association rules</h2>
@@ -244,15 +256,11 @@
             </section>
             <aside class="panel side-panel">
               <div class="section-head">
-                <h2>System behaviour</h2>
-                <p>The demo models the main association rules.</p>
+                <h2>Complaints</h2>
+                <p>Reports submitted by members appear here for the association.</p>
               </div>
-              <div class="feature-list">
-                <article><b>Registered email login</b><span>Booking is tied to the member record and apartment.</span></article>
-                <article><b>One person per slot</b><span>Booked slots cannot be double-booked.</span></article>
-                <article><b>30-minute reminder</b><span>Reminder is scheduled when a booking is created.</span></article>
-                <article><b>Cancellation broadcast</b><span>Last-minute cancellations create an all-member notification.</span></article>
-              </div>
+              <div id="admin-complaint-list"></div>
+              <button id="admin-logout-button" class="secondary">Log out admin</button>
             </aside>
           </div>
         </section>
